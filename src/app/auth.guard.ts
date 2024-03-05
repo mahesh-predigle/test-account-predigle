@@ -1,6 +1,6 @@
 // auth.guard.ts
 import { Injectable } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable({
@@ -13,15 +13,18 @@ export class AuthGuard {
     private activeRoute: ActivatedRoute,
     ) {
     this.activeRoute.queryParams.subscribe(params => {
-      // debugger
       this.redirectToUrl = params['param1'];
       // console.log('this.param1', this.param1);           
     });
   }
 
-  canActivate(): boolean {
+  canActivate(
+    route: ActivatedRouteSnapshot
+  ): boolean {
+    // debugger
+    const redirect: string = route.queryParams['param1'];
     if (this.oauthService.hasValidAccessToken()) {
-      // this.redirctTo();
+      this.redirectTo(`http://localhost:4200?redirectFromAccount=${true}`)
       return true;
     } else {
       this.oauthService.initImplicitFlow();
@@ -29,11 +32,9 @@ export class AuthGuard {
     }
   }
 
-  redirctTo() {
-    // Update redirectUri before initiating login flow
-    this.oauthService.configure({
-      redirectUri: this.redirectToUrl
-    });
-    this.oauthService.loadDiscoveryDocumentAndLogin();
+  redirectTo(redirect: string): void {
+    const externalUrl = redirect;
+    window.location.href = externalUrl;
   }
+
 }

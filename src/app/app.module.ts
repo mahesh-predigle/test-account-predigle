@@ -46,6 +46,7 @@ export class AppModule {
     });
 
     this.oauthService.loadDiscoveryDocumentAndLogin();
+    // this.oauthService.initImplicitFlow();
     // this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
   
   }
