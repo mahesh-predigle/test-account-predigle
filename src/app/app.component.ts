@@ -9,17 +9,31 @@ import { OAuthService } from 'angular-oauth2-oidc';
 })
 export class AppComponent {
   param1: any;
-  constructor(private oauthService: OAuthService,
-    private activeRoute: ActivatedRoute,
-    private router: Router) {}
+  constructor(private oauthService: OAuthService) {}
   
   ngOnInit(): void {
-    
-    // this.activeRoute.queryParams.subscribe(params => {
-    //   debugger
-    //   this.param1 = params['param1'];
-    //   console.log('this.param1', this.param1);
-    // });
+    this.handleCallback();
+  }
+
+  private handleCallback() {
+    this.oauthService.tryLogin({
+      onTokenReceived: (context) => {
+        // Handle successful login, e.g., navigate to a protected route
+        this.handleUserDetails();
+      },
+      onLoginError: (context) => {
+        console.error('Login error:', context);
+      },
+    });
+  }
+  
+  private handleUserDetails() {
+    const idToken = this.oauthService.getIdToken();
+    if (idToken) {
+      // const decodedToken = this.oauthService.tokenHelper.decodeToken(idToken);
+      localStorage.setItem('idToken', JSON.stringify(idToken));
+      console.log('idToken', idToken);
+    }
   }
 
 

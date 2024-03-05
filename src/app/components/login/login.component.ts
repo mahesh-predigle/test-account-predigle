@@ -21,13 +21,16 @@ export class LoginComponent implements OnInit  {
     responseType: 'token id_token',
     scope: 'openid profile email',
     showDebugInformation: true,
+    // customQueryParams: {
+    //   prompt: 'select_account' // Always prompt for account selection
+    // }
   }
   constructor(
     private oauthService: OAuthService, 
     private router: Router,
     private activeRoute: ActivatedRoute,
     private _http: HttpClient,
-    // private authService:AuthService
+    private authService:AuthService
     ) {
       // this.configureOAuth();
     }
@@ -35,7 +38,8 @@ export class LoginComponent implements OnInit  {
   ngOnInit(): void {
     this.activeRoute.queryParams.subscribe(params => {
       // debugger
-      this.param = `${params['param1']}/?redirectFromAccount=${true}`;
+      // this.param = `${params['param1']}/?redirectFromAccount=${true}`;
+      this.param = params['param1'];
       // "'http://localhost:5000/login?param1=http://localhost:4200'"
       // this.param['redirectFromAccount'] = 'YOUR_VALUE_HERE';
       // console.log('this.param', this.param);           
@@ -43,32 +47,24 @@ export class LoginComponent implements OnInit  {
   }
 
   login() {
-    this.dynamicRedirect()
     // withouth loadDiscoveryDocumentAndLogin initImplicitFlow doesn't work 
+    // this.authService.updateRedirectUri(this.param)
+    // this.authService.configureOAuth()
+    // this.dynamicRedirect()
     this.oauthService.loadDiscoveryDocumentAndLogin(); 
-    this.oauthService.initImplicitFlow();   
+    this.oauthService.initImplicitFlow();
     // this.handleCallback();      
   }
 
   dynamicRedirect(): void {
-    Object.assign(this.authConfig, { redirectUri: this.param });
+    Object.assign(this.authConfig, { redirectUri: 'http://localhost:4200'});
     this.oauthService.configure(this.authConfig);
   }
 
   loginWithEmailPassword() {
     // this.oauthService
   }
-  private handleCallback() {
-    this.oauthService.tryLogin({
-      onTokenReceived: (context) => {
-        // Handle successful login, e.g., navigate to a protected route
-        this.handleUserDetails();
-      },
-      onLoginError: (context) => {
-        console.error('Login error:', context);
-      },
-    });
-  }
+
 
 private configureOAuth() {
   this.oauthService.configure(this.authConfig)
@@ -79,13 +75,5 @@ private configureOAuth() {
   this.oauthService.loadDiscoveryDocumentAndLogin();
 }
 
-  private handleUserDetails() {
-    const idToken = this.oauthService.getIdToken();
-    if (idToken) {
-      // const decodedToken = this.oauthService.tokenHelper.decodeToken(idToken);
-      localStorage.setItem('idToken', JSON.stringify(idToken));
-      console.log('idToken', idToken);
-    }
-  }
 
 }

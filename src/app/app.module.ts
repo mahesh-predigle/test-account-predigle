@@ -26,7 +26,7 @@ export class AppModule {
   constructor(
     private oauthService: OAuthService 
     ) {
-    // this.configureOAuth();
+    this.configureOAuth();
   }
 
   private configureOAuth() {
@@ -34,16 +34,19 @@ export class AppModule {
       issuer: 'https://accounts.google.com',
       strictDiscoveryDocumentValidation: false,// for not checking exact above url in given
       redirectUri: window.location.origin,// redirect after logged in to google to my application
+      // redirectUri: 'http://localhost:4200',// redirect after logged in to google to my application
       clientId:
         '101289191754-ue0omn4map44ra6enrtat6kui29up7kh.apps.googleusercontent.com',
       responseType: 'token id_token',
       scope: 'openid profile email',
       showDebugInformation: true,
+      customQueryParams: {
+        prompt: 'select_account' // Always prompt for account selection
+      }
     });
-  
-    // historyCleanupOff
-    // triggerAuthorizationResultEvent
-    this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+
+    this.oauthService.loadDiscoveryDocumentAndLogin();
+    // this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
   
   }
 }
