@@ -40,14 +40,18 @@ export class AppModule {
       responseType: 'token id_token',
       scope: 'openid profile email',
       showDebugInformation: true,
-      customQueryParams: {
-        prompt: 'select_account' // Always prompt for account selection
-      }
+      // customQueryParams: {
+      //   prompt: 'select_account' // Always prompt for account selection
+      // },
+      // silentRefreshRedirectUri: window.location.origin,
+      // useSilentRefresh: true, // Needed for Code Flow to suggest using iframe-based refreshes
+      // silentRefreshTimeout: 5000, // For faster testing
+      // timeoutFactor: 0.25, // For faster testing
+      // sessionChecksEnabled: true,
     });
-
+    this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
     this.oauthService.loadDiscoveryDocumentAndLogin();
     // this.oauthService.initImplicitFlow();
-    // this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
   
   }
 }

@@ -19,9 +19,9 @@ export class AuthService {
       responseType: 'token id_token',
       scope: 'openid profile email',
       showDebugInformation: true,
-      customQueryParams: {
-        prompt: 'select_account' // Always prompt for account selection
-      }
+      // customQueryParams: {
+      //   prompt: 'select_account' // Always prompt for account selection
+      // }
     });
     // this.oauthService.loadDiscoveryDocumentAndLogin(); 
   }

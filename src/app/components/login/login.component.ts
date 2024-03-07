@@ -39,7 +39,15 @@ export class LoginComponent implements OnInit  {
     this.activeRoute.queryParams.subscribe(params => {
       // debugger
       // this.param = `${params['param1']}/?redirectFromAccount=${true}`;
+      localStorage.clear();
       this.param = params['param1'];
+      const isLoggedOut = params['logout'];
+      localStorage.setItem('authenticalUrl', JSON.stringify(this.param));
+      isLoggedOut && localStorage.setItem('logout', JSON.stringify(isLoggedOut));
+      if(isLoggedOut){
+        this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+        this.oauthService.logOut();
+      }
       // "'http://localhost:5000/login?param1=http://localhost:4200'"
       // this.param['redirectFromAccount'] = 'YOUR_VALUE_HERE';
       // console.log('this.param', this.param);           

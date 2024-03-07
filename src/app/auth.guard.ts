@@ -11,20 +11,22 @@ export class AuthGuard {
   constructor(
     private oauthService: OAuthService,
     private activeRoute: ActivatedRoute,
-    ) {
-    this.activeRoute.queryParams.subscribe(params => {
-      this.redirectToUrl = params['param1'];
-      // console.log('this.param1', this.param1);           
-    });
-  }
+    ) { }
 
   canActivate(
     route: ActivatedRouteSnapshot
   ): boolean {
-    // debugger
-    const redirect: string = route.queryParams['param1'];
+    debugger    
+    // const redirect: string = route.queryParams['param1'];
+    // const redirectUrl = localStorage.getItem('authenticalUrl') ? JSON.parse(localStorage.getItem('authenticalUrl')!) : '';
+    // const isLoggedOut = localStorage.getItem('logout') ? JSON.parse(localStorage.getItem('logout')!) : '';
+    // if(isLoggedOut){
+    //   this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+    //   this.oauthService.logOut();
+    // }
     if (this.oauthService.hasValidAccessToken()) {
-      this.redirectTo(`http://localhost:4200?redirectFromAccount=${true}`)
+      // isLoggedOut != 'true' && this.redirectTo(`http://localhost:4200?redirectFromAccount=${true}`)
+      // this.redirectTo(`${redirectUrl}?redirectFromAccount=${true}`)
       return true;
     } else {
       this.oauthService.initImplicitFlow();
@@ -33,6 +35,7 @@ export class AuthGuard {
   }
 
   redirectTo(redirect: string): void {
+    localStorage.clear();
     const externalUrl = redirect;
     window.location.href = externalUrl;
   }
