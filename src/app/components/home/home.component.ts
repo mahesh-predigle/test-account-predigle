@@ -10,6 +10,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class HomeComponent implements OnInit {
   param1: any;
+  redirectUrl: string | undefined;
   constructor(
     private oauthService: OAuthService,
     private router: Router,
@@ -26,7 +27,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngAfterViewInit(): void{
-    const redirectUrl = localStorage.getItem('authenticalUrl') ? JSON.parse(localStorage.getItem('authenticalUrl')!) : '';
+    this.redirectUrl = localStorage.getItem('authenticalUrl') ? JSON.parse(localStorage.getItem('authenticalUrl')!) : '';
     const isLoggedOut = localStorage.getItem('logout') ? JSON.parse(localStorage.getItem('logout')!) : '';
     debugger
     if (isLoggedOut == 'true') {
@@ -36,7 +37,7 @@ export class HomeComponent implements OnInit {
           this.logout();
         }, 500);
     }else{
-      this.redirectTo(`${redirectUrl}?redirectFromAccount=${true}`)
+      this.redirectTo(`${this.redirectUrl}?redirectFromAccount=${true}`)
     }
 }
 
@@ -48,7 +49,7 @@ export class HomeComponent implements OnInit {
 
 
   logout() {
-    this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+    this.oauthService.logoutUrl =  "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue="+this.redirectUrl;
     this.oauthService.logOut();
     // Optional: Redirect to a logout component
     // this.router.navigate(['/login']);
