@@ -49,7 +49,7 @@ export class AppModule {
       // timeoutFactor: 0.25, // For faster testing
       // sessionChecksEnabled: true,
     });
-    this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+    // this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
     this.oauthService.loadDiscoveryDocumentAndLogin();
     // this.oauthService.initImplicitFlow();
   
