@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { AuthService } from './components/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,22 +12,23 @@ export class AuthGuard {
   constructor(
     private oauthService: OAuthService,
     private activeRoute: ActivatedRoute,
+    private authService:AuthService
     ) { }
 
   canActivate(
     route: ActivatedRouteSnapshot
   ): boolean {
-    debugger    
     // const redirect: string = route.queryParams['param1'];
-    // const redirectUrl = localStorage.getItem('authenticalUrl') ? JSON.parse(localStorage.getItem('authenticalUrl')!) : '';
-    // const isLoggedOut = localStorage.getItem('logout') ? JSON.parse(localStorage.getItem('logout')!) : '';
+    const redirectUrl = sessionStorage.getItem('authenticalUrl') ? JSON.parse(sessionStorage.getItem('authenticalUrl')!) : '';
+    const isLoggedOut = localStorage.getItem('logout') ? JSON.parse(localStorage.getItem('logout')!) : false;
+    // const is_access_token = localStorage.getItem('access_token') ? JSON.parse(localStorage.getItem('access_token')!) : false;
+    // debugger
     // if(isLoggedOut){
-    //   this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+    //   // debugger
     //   this.oauthService.logOut();
     // }
     if (this.oauthService.hasValidAccessToken()) {
-      // isLoggedOut != 'true' && this.redirectTo(`http://localhost:4200?redirectFromAccount=${true}`)
-      // this.redirectTo(`${redirectUrl}?redirectFromAccount=${true}`)
+      this.redirectTo(`${redirectUrl}?redirectFromAccount=${true}`);
       return true;
     } else {
       this.oauthService.initImplicitFlow();
@@ -35,7 +37,7 @@ export class AuthGuard {
   }
 
   redirectTo(redirect: string): void {
-    localStorage.clear();
+    // sessionStorage.removeItem('authenticalUrl');
     const externalUrl = redirect;
     window.location.href = externalUrl;
   }

@@ -24,10 +24,12 @@ export class HomeComponent implements OnInit {
     //   this.param1 = params['param1'];
     //   console.log('this.param1', this.param1);
     // });
+    console.log('working??');
+    
   }
 
   ngAfterViewInit(): void{
-    this.redirectUrl = localStorage.getItem('authenticalUrl') ? JSON.parse(localStorage.getItem('authenticalUrl')!) : '';
+    this.redirectUrl = sessionStorage.getItem('authenticalUrl') ? JSON.parse(sessionStorage.getItem('authenticalUrl')!) : '';
     const isLoggedOut = localStorage.getItem('logout') ? JSON.parse(localStorage.getItem('logout')!) : '';
     debugger
     if (isLoggedOut == 'true') {
@@ -42,17 +44,17 @@ export class HomeComponent implements OnInit {
 }
 
   redirectTo(redirect: string): void {
-    localStorage.clear();
+    sessionStorage.removeItem('authenticalUrl');
+    localStorage.removeItem('logout');
     const externalUrl = redirect;
     window.location.href = externalUrl;
   }
 
 
   logout() {
-    this.oauthService.logoutUrl =  "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue="+this.redirectUrl;
-    this.oauthService.logOut();
+    // this.oauthService.logoutUrl =  "https://www.google.com/accounts/Logout?continue=https://appengine.google.com/_ah/logout?continue="+this.redirectUrl;
+    this.oauthService.logOut();  
     // Optional: Redirect to a logout component
-    // this.router.navigate(['/login']);
-    localStorage.clear();  
+    this.router.navigate(['/login']);
   }
 }

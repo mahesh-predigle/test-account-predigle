@@ -32,6 +32,20 @@ export class LoginComponent implements OnInit  {
     private _http: HttpClient,
     private authService:AuthService
     ) {
+      window.addEventListener('storage', (event) => {
+        // The `key` is `null` if the event was caused by `.clear()`
+        if (event.key !== 'access_token' && event.key !== null) {
+          return;
+        }
+  
+        console.warn('Noticed changes to access_token (most likely from another tab), updating isAuthenticated');
+        // this.isAuthenticatedSubject$.next(this.oauthService.hasValidAccessToken());
+        debugger
+        if (this.oauthService.hasValidAccessToken()) {
+          // this.navigateToLoginPage();
+          this.redirectTo(`${this.param}?redirectFromAccount=${true}`);
+        }
+      });
       // this.configureOAuth();
     }
   // account.predigle.com 
@@ -39,35 +53,58 @@ export class LoginComponent implements OnInit  {
     this.activeRoute.queryParams.subscribe(params => {
       // debugger
       // this.param = `${params['param1']}/?redirectFromAccount=${true}`;
-      localStorage.clear();
-      this.param = params['param1'];
-      const isLoggedOut = params['logout'];
-      localStorage.setItem('authenticalUrl', JSON.stringify(this.param));
-      isLoggedOut && localStorage.setItem('logout', JSON.stringify(isLoggedOut));
-      if(isLoggedOut){
-        this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
-        this.oauthService.logOut();
+      if(params){
+        sessionStorage.removeItem('authenticalUrl');
+        localStorage.removeItem('logout');
+        this.param = params['param1'];
+        // 'authenticalUrl' = params['param1']?.split(':')[2];
+        debugger
+        const isLoggedOut = params['logout'];
+        this.param && sessionStorage.setItem('authenticalUrl', JSON.stringify(this.param));
+        isLoggedOut && localStorage.setItem('logout', JSON.stringify(isLoggedOut));
+        const redirectUrl = this.param;
+        // const is_access_token = localStorage.getItem('access_token') ? JSON.parse(localStorage.getItem('access_token')!) : false;
+        // debugger
+        if(this.oauthService.hasValidAccessToken() && isLoggedOut){
+          this.oauthService.logOut();
+        }
+        else if(this.oauthService.hasValidAccessToken()){
+          this.redirectTo(`${redirectUrl}?redirectFromAccount=${true}`);
+        }else {
+          this.oauthService.logOut();
+        }
       }
+      // if(isLoggedOut){
+      //   this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+      //   this.oauthService.logOut();
+      // }
       // "'http://localhost:5000/login?param1=http://localhost:4200'"
       // this.param['redirectFromAccount'] = 'YOUR_VALUE_HERE';
       // console.log('this.param', this.param);           
     });
   }
+  
+  redirectTo(redirect: string): void {
+    sessionStorage.removeItem('authenticalUrl');
+    const externalUrl = redirect;
+    window.location.href = externalUrl;
+  }
 
   login() {
     // withouth loadDiscoveryDocumentAndLogin initImplicitFlow doesn't work 
     // this.authService.updateRedirectUri(this.param)
-    // this.authService.configureOAuth()
+    localStorage.removeItem('logout');
+    this.authService.configureOAuth()
     // this.dynamicRedirect()
     this.oauthService.loadDiscoveryDocumentAndLogin(); 
     this.oauthService.initImplicitFlow();
     // this.handleCallback();      
   }
 
-  dynamicRedirect(): void {
-    Object.assign(this.authConfig, { redirectUri: 'http://localhost:4200'});
-    this.oauthService.configure(this.authConfig);
-  }
+  // dynamicRedirect(): void {
+  //   Object.assign(this.authConfig, { redirectUri: 'http://localhost:4200'});
+  //   this.oauthService.configure(this.authConfig);
+  // }
 
   loginWithEmailPassword() {
     // this.oauthService

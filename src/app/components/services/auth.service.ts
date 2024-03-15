@@ -5,6 +5,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
   providedIn: 'root'
 })
 export class AuthService {
+  fromWhere: string = '';
 
   constructor(private oauthService: OAuthService) {
     // this.configureOAuth()
@@ -19,9 +20,9 @@ export class AuthService {
       responseType: 'token id_token',
       scope: 'openid profile email',
       showDebugInformation: true,
-      // customQueryParams: {
-      //   prompt: 'select_account' // Always prompt for account selection
-      // }
+      customQueryParams: {
+        prompt: 'select_account' // Always prompt for account selection
+      }
     });
     // this.oauthService.loadDiscoveryDocumentAndLogin(); 
   }

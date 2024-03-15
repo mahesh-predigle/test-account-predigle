@@ -6,11 +6,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 
 //OIDC
-import { OAuthModule, OAuthService } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthService, OAuthStorage } from 'angular-oauth2-oidc';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { ActivatedRoute } from '@angular/router';
 
+// We need a factory since localStorage is not available at AOT build time
+export function storageFactory(): OAuthStorage {
+  return localStorage;
+}
 @NgModule({
   declarations: [AppComponent, LoginComponent, HomeComponent],
   imports: [
@@ -19,7 +23,9 @@ import { ActivatedRoute } from '@angular/router';
     HttpClientModule,
     OAuthModule.forRoot(),
   ],
-  providers: [],
+  providers: [
+    { provide: OAuthStorage, useFactory: storageFactory }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
@@ -49,8 +55,8 @@ export class AppModule {
       // timeoutFactor: 0.25, // For faster testing
       // sessionChecksEnabled: true,
     });
-    this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
-    this.oauthService.loadDiscoveryDocumentAndLogin();
+    // this.oauthService.logoutUrl = "https://www.google.com/accounts/Logout";
+    // this.oauthService.loadDiscoveryDocumentAndLogin();
     // this.oauthService.initImplicitFlow();
   
   }
