@@ -1,27 +1,36 @@
-# PredigleAuth
+# User Registration Endpoint Documentation
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.10.
+## Endpoint: `/users/register`
 
-## Development server
+### Description
+This endpoint is used for registering a new user into the system. It validates the incoming data, saves the user details into the database, and returns the created user or relevant error messages.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+---
 
-## Code scaffolding
+### HTTP Method
+**GET**
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+---
 
-## Build
+### Request Body
+The following data fields are required to register a new user:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+| Field            | Type     | Required | Validation                                                                 |
+|------------------|----------|----------|---------------------------------------------------------------------------|
+| `email`          | String   | Yes      | Must be a valid email address.                                           |
+| `fullname.firstname` | String   | Yes      | Must have at least 3 characters.                                         |
+| `fullname.lastname`  | String   | No       | If provided, must have at least 3 characters.                            |
+| `password`       | String   | Yes      | Must be at least 6 characters long.                                      |
 
-## Running unit tests
+---
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Example Request Body
+```json
+{
+  "email": "john.doe@example.com",
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "password": "password123"
+}
